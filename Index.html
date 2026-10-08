@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Eletrônico</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .caixa {
+            background: white;
+            width: 380px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d4ed8;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f3f4f6;
+        }
+
+        .erro {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .sucesso {
+            color: #166534;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .saldo {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="caixa">
+
+        <h1>🏧 Caixa Eletrônico</h1>
+
+        <label for="saque">Valor do saque:</label>
+
+        <input
+            type="number"
+            id="saque"
+            placeholder="Digite o valor"
+            min="1"
+        >
+
+        <button onclick="realizarSaque()">
+            Sacar
+        </button>
+
+        <div id="resultado"></div>
+
+    </div>
+
+    <script>
+        let saldo = 1000;
+
+        function realizarSaque() {
+
+            const saque = parseInt(document.getElementById("saque").value);
+            const resultado = document.getElementById("resultado");
+
+            resultado.innerHTML = "";
+
+            // Verifica se o valor é válido
+            if (isNaN(saque) || saque <= 0) {
+                resultado.innerHTML =
+                    "<p class='erro'>Digite um valor válido para o saque.</p>";
+                return;
+            }
+
+            // Verifica o saldo
+            if (saque > saldo) {
+                resultado.innerHTML =
+                    "<p class='erro'>❌ Saldo insuficiente.</p>" +
+                    "<p>Saldo disponível: R$ " + saldo.toFixed(2) + "</p>";
+                return;
+            }
+
+            let restante = saque;
+
+            // Calcula as notas
+            const notas100 = Math.floor(restante / 100);
+            restante %= 100;
+
+            const notas50 = Math.floor(restante / 50);
+            restante %= 50;
+
+            const notas20 = Math.floor(restante / 20);
+            restante %= 20;
+
+            const notas10 = Math.floor(restante / 10);
+            restante %= 10;
+
+            const notas5 = Math.floor(restante / 5);
+            restante %= 5;
+
+            const notas2 = Math.floor(restante / 2);
+            restante %= 2;
+
+            // Verifica se é possível formar o valor
+            if (restante !== 0) {
+                resultado.innerHTML =
+                    "<p class='erro'>❌ Valor inválido.</p>" +
+                    "<p>Não é possível realizar esse saque utilizando apenas notas de R$ 100, R$ 50, R$ 20, R$ 10, R$ 5 e R$ 2.</p>";
+                return;
+            }
+
+            // Atualiza o saldo
+            saldo -= saque;
+
+            let html = `
+                <div class="sucesso">
+                    <strong>✅ Saque realizado!</strong>
+                    <p>Valor sacado: R$ ${saque.toFixed(2)}</p>
+
+                    <strong>Notas entregues:</strong>
+                    <ul>
+            `;
+
+            if (notas100 > 0) {
+                html += `<li>${notas100} nota(s) de R$ 100</li>`;
+            }
+
+            if (notas50 > 0) {
+                html += `<li>${notas50} nota(s) de R$ 50</li>`;
+            }
+
+            if (notas20 > 0) {
+                html += `<li>${notas20} nota(s) de R$ 20</li>`;
+            }
+
+            if (notas10 > 0) {
+                html += `<li>${notas10} nota(s) de R$ 10</li>`;
+            }
+
+            if (notas5 > 0) {
+                html += `<li>${notas5} nota(s) de R$ 5</li>`;
+            }
+
+            if (notas2 > 0) {
+                html += `<li>${notas2} nota(s) de R$ 2</li>`;
+            }
+
+            html += `
+                    </ul>
+
+                    <div class="saldo">
+                        Saldo restante: R$ ${saldo.toFixed(2)}
+                    </div>
+                </div>
+            `;
+
+            resultado.innerHTML = html;
+        }
+    </script>
+
+</body>
+</html>
